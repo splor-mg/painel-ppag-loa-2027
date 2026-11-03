@@ -22,11 +22,11 @@ Thumbs.db
 # Logs
 *.log
 
-# Shiny for Python / Shinylive (dist_shiny/ e gerado por `shinylive export`;
-# os CSVs pre-processados em shiny_app/data sao versionados, como o
-# dados.json do site estatico, pois sao o que o app em si consome)
-dist_shiny/
+# Shiny for Python / Shinylive (dist_* e gerado por `shinylive export`;
+# os CSVs pre-processados em shiny_app_acessivel*/data sao versionados,
+# pois sao o que o app em si consome)
 dist_shiny_acessivel/
+dist_shiny_acessivel_menu_horizontal/
 
 # Scripts Playwright descartaveis usados so para verificar uma tarefa
 # (criados e apagados dentro da propria tarefa -- nunca comitados)

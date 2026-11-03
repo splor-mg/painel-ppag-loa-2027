@@ -1,13 +1,15 @@
-"""Gera shiny_app/data/*.csv a partir dos módulos dados_*.py / etl/*.py.
+"""Gera shiny_app_acessivel/data/*.csv a partir dos módulos dados_*.py / etl/*.py.
 
-Mesma lógica e premissas do site estático (ver docs/premissas.md) — só
-muda o formato de saída (CSV, lido pelo app Shiny via pandas) e o fato de
-rodar como pré-processamento (o app Shinylive roda no navegador via
-Pyodide; ler as bases .xlsx/.txt brutas ali seria lento e exigiria
+Mesma lógica e premissas do site estático original (ver docs/premissas.md)
+— só muda o formato de saída (CSV, lido pelo app Shiny via pandas) e o
+fato de rodar como pré-processamento (o app Shinylive roda no navegador
+via Pyodide; ler as bases .xlsx/.txt brutas ali seria lento e exigiria
 bundlar arquivos grandes, então o build prepara tudo antes).
 
 Rodar sempre que os dados ou a lógica de algum dados_*.py mudarem, antes de
-publicar a branch gh-pages (pasta /shiny).
+publicar a branch gh-pages. Se houver mais de uma variante do painel
+(ex. shiny_app_acessivel_menu_horizontal/), copiar a pasta data/ gerada
+aqui para a(s) outra(s) também -- mesmo padrão já usado para criá-las.
 """
 
 import shutil
@@ -43,7 +45,7 @@ from etl.despesa import (
 from etl.limpeza_inicial import carregar_acoes, carregar_programas
 from etl.orcamento import carregar_qdd_fiscal, carregar_qdd_investimento
 
-PASTA_SAIDA = Path(__file__).resolve().parent / "shiny_app" / "data"
+PASTA_SAIDA = Path(__file__).resolve().parent / "shiny_app_acessivel" / "data"
 COLUNA_PROGRAMA = "Código do Programa"
 
 
