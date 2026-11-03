@@ -1,25 +1,30 @@
-# Painel PPAG-LOA 2027 — versão Shiny for Python + Shinylive
+# Painel PPAG-LOA 2027 — versão Shiny for Python + Shinylive (acessível)
 
-Mesmo painel do site estático (`../site_estatico/`), reconstruído com
-[Shiny for Python](https://shiny.posit.co/py/) +
-[Shinylive](https://shiny.posit.co/py/docs/shinylive.html) para comparação
-entre ferramentas. Mesmos dados, mesmas regras de negócio
-(ver `../docs/premissas.md`), mesmos filtros/exportações — só muda a
-ferramenta. Roda inteiramente no navegador (Python compilado para
-WebAssembly via Pyodide), sem servidor — por isso pode ser publicado como
-site estático comum.
+Painel construído com [Shiny for Python](https://shiny.posit.co/py/) +
+[Shinylive](https://shiny.posit.co/py/docs/shinylive.html) — mesmos dados e
+mesmas regras de negócio de `../docs/premissas.md`, com foco em
+acessibilidade: menu lateral, alto contraste, foco visível, skip link e
+toggle "Ver como tabela" em cada gráfico (alternativa textual ao Plotly
+para quem usa leitor de tela/teclado). Roda inteiramente no navegador
+(Python compilado para WebAssembly via Pyodide), sem servidor — por isso
+pode ser publicado como site estático comum.
+
+Existe também `../shiny_app_acessivel_menu_horizontal/` — cópia idêntica
+deste painel, só com o menu de navegação horizontal (abaixo do título) em
+vez de lateral, criada para comparação lado a lado. Depois da comparação,
+uma das duas variantes deve virar a final e a outra ser removida.
 
 ## Arquitetura
 
-- `app.py`: monta o `page_navbar` com as 12 páginas e registra o server de
-  cada uma.
+- `app.py`: monta a navegação (`ui.navset_pill_list`, menu lateral) com as
+  12 páginas e registra o server de cada uma.
 - `paginas/*.py`: uma página por arquivo, cada uma com `panel_ui()` (layout)
   e `register_server(input, output, session)` (reatividade).
 - `dados_app.py`: carrega os CSVs pré-processados uma única vez.
 - `componentes.py`, `graficos.py`, `utils.py`, `exportar.py`: helpers
-  reaproveitados entre páginas (cards `value_box`, gráficos Plotly,
-  formatação, exportação CSV/Excel com a mesma sanitização contra injeção
-  de fórmula usada no site estático).
+  reaproveitados entre páginas (cards de KPI, barras de progresso, gráficos
+  Plotly, formatação, exportação CSV/Excel com sanitização contra injeção
+  de fórmula).
 - `data/*.csv` + `mg_municipios.geojson`: gerados por
   `../gerar_dados_shiny.py`, que importa diretamente os módulos
   `dados_*.py`/`etl/*.py` da raiz do repositório (mesma lógica e premissas,
@@ -38,10 +43,10 @@ Pré-requisito: ambiente Poetry da raiz do repositório instalado
 
 ```sh
 # a partir da raiz do repositorio
-poetry run python gerar_dados_shiny.py      # gera/atualiza shiny_app/data
-poetry run shiny run shiny_app/app.py       # servidor local (Python nativo, rápido para depurar)
-poetry run shinylive export shiny_app dist_shiny   # exporta a versão estática/Pyodide
-python -m http.server --directory dist_shiny --bind localhost 8008
+poetry run python gerar_dados_shiny.py                  # gera/atualiza shiny_app_acessivel/data
+poetry run shiny run shiny_app_acessivel/app.py          # servidor local (Python nativo, rápido para depurar)
+poetry run shinylive export shiny_app_acessivel dist_shiny_acessivel   # exporta a versão estática/Pyodide
+python -m http.server --directory dist_shiny_acessivel --bind localhost 8008
 ```
 
 **Nota sobre tema:** `app.py` não passa um `ui.Theme(...)` customizado —
@@ -53,13 +58,13 @@ execução).
 
 ## Publicar
 
-O `dist_shiny/` gerado é copiado para a branch `gh-pages`, na pasta
-`shiny/` (sem mexer na raiz do site):
+O `dist_shiny_acessivel/` gerado é copiado para a branch `gh-pages`, na
+pasta `shiny-acessivel/` (sem mexer no resto do site):
 
 ```sh
-poetry run shinylive export shiny_app dist_shiny
-# copiar o conteudo de dist_shiny/ para gh-pages:/shiny/, commitar, dar push
+poetry run shinylive export shiny_app_acessivel dist_shiny_acessivel
+# copiar o conteudo de dist_shiny_acessivel/ para gh-pages:/shiny-acessivel/, commitar, dar push
 ```
 
 Publicado em:
-https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny/
+https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel/

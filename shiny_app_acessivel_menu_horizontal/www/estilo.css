@@ -1,0 +1,780 @@
+/* Fundação visual da versão acessível: tipografia, menu horizontal, skip
+link e foco visível. As variáveis de cor/sombra já existentes no
+:root abaixo continuam valendo para o que ainda não foi redesenhado. */
+:root {
+  --fonte-titulo: "Lexend", system-ui, sans-serif;
+  --fonte-corpo: "Public Sans", system-ui, sans-serif;
+  --cor-apoio: #0047ab;
+  --cor-apoio-escuro: #0a2540;
+}
+
+body {
+  font-family: var(--fonte-corpo);
+}
+
+h1, h2, h3, h4, h5, h6, .titulo-pagina {
+  font-family: var(--fonte-titulo);
+}
+
+/* Skip link: fora da tela até receber foco por teclado. */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--cor-marca);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 0 0 8px 0;
+  font-weight: 600;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* Foco visível consistente em todo elemento interativo. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.nav-link:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--cor-apoio);
+  outline-offset: 2px;
+}
+
+.app-cabecalho {
+  background: #ffffff;
+  border-bottom: 1px solid var(--cor-borda);
+  padding: 14px 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.app-titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--cor-marca);
+}
+
+.app-subtitulo {
+  font-family: var(--fonte-corpo);
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+}
+
+.app-conteudo {
+  padding: 18px 20px;
+}
+
+/* navset_pill (ao contrário de navset_pill_list, usado na variante de
+menu lateral) não separa nav e conteúdo em colunas Bootstrap -- o
+<ul class="nav nav-pills"> vem direto, seguido do .tab-content. Estiliza
+o próprio <ul> como uma faixa horizontal, azul institucional (mesma cor
+de marca usada na variante de menu lateral), que quebra linha em telas
+estreitas em vez de forçar rolagem horizontal. */
+.app-conteudo .nav-pills {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: var(--cor-apoio-escuro);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 18px;
+}
+
+.app-conteudo .nav-pills .nav-link {
+  color: #cfe0f0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 7px;
+  padding: 9px 14px;
+}
+
+.app-conteudo .nav-pills .nav-link.active {
+  background: var(--cor-apoio);
+  color: #ffffff;
+}
+
+/* O anel de foco padrão (--cor-apoio) tem ótimo contraste contra o novo
+fundo azul-marinho do menu (branco: 15.5:1 contra o fundo normal, 8.4:1
+contra o item ativo), mas a regra abaixo é mantida porque o anel precisa
+se destacar tanto do item ativo (azul) quanto do fundo (azul-marinho) ao
+mesmo tempo -- usar a própria --cor-apoio no anel se perderia contra o
+item ativo, que tem essa mesma cor de fundo. */
+.app-conteudo .nav-pills .nav-link:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* Identidade visual do painel PPAG-LOA 2027, por cima do tema bslib
+"shiny" (ver app.py: ui.Theme(preset="shiny").add_defaults(primary=...)) —
+mesma linguagem visual do site estático: fundo cinza-claro, cards
+brancos com sombra leve, azul #0047AB como cor de marca. */
+
+:root {
+  --cor-fundo-card: #ffffff;
+  --cor-borda: #cbd2d9;
+  --cor-divisor-suave: #eef1f4;
+  --cor-marca: #0047ab;
+  --cor-texto-suave: #616e7c;
+  --sombra-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  /* Sobrepõe a cor de marca do tema Bootstrap (sem precisar recompilar o
+  SASS, que não está disponível no Pyodide/Shinylive). */
+  --bs-primary: #0047ab;
+  --bs-primary-rgb: 0, 71, 171;
+  --bs-link-color: #0047ab;
+  --bs-link-color-rgb: 0, 71, 171;
+  --bs-link-hover-color: #003580;
+}
+
+.btn-primary {
+  --bs-btn-bg: #0047ab;
+  --bs-btn-border-color: #0047ab;
+  --bs-btn-hover-bg: #003580;
+  --bs-btn-hover-border-color: #003580;
+  --bs-btn-active-bg: #003580;
+  --bs-btn-active-border-color: #003580;
+}
+
+.nav-underline .nav-link.active {
+  color: #0047ab !important;
+  border-bottom-color: #0047ab !important;
+}
+
+a {
+  color: #0047ab;
+}
+
+body {
+  background: #f5f6f8;
+}
+
+/* Navbar: titulo numa linha propria, em cima; menu de paginas numa linha
+cheia logo abaixo, sem quebrar para uma segunda linha (rola na horizontal
+se nao couber) -- mesma estrutura do site estatico. */
+.navbar .container-fluid {
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.navbar-brand {
+  font-weight: 800 !important;
+  font-size: 1.7rem !important;
+  color: var(--cor-marca) !important;
+  margin-bottom: 0.4rem;
+}
+
+.navbar-toggler {
+  align-self: flex-start;
+}
+
+.navbar-nav {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.navbar-nav .nav-link {
+  white-space: nowrap;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  font-size: 0.85rem;
+}
+
+.tab-content {
+  padding-top: 1rem;
+}
+
+/* Titulo da pagina (logo abaixo do menu, acima dos filtros/conteudo) */
+.titulo-pagina {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+/* Rotulo dos filtros: cinza claro mas legivel, maiusculo, como nos
+outros dois paineis. */
+.control-label {
+  color: var(--cor-texto-suave);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Caixa dos filtros (segmentadores) com bordas mais arredondadas. */
+.selectize-input {
+  border-radius: 10px !important;
+}
+
+.selectize-dropdown {
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+/* Cards de KPI */
+.grade-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.card,
+.card-kpi {
+  min-width: 0;
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  margin-bottom: 0 !important;
+}
+
+.card-kpi .fa {
+  height: 1.6em;
+  width: 1.6em;
+  opacity: 0.85;
+}
+
+.card .valor,
+.card-kpi .valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.card .titulo,
+.card-kpi .titulo {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.9;
+}
+
+/* Variante compacta (Visão Geral): cards tão baixos quanto os da pagina
+LOA Investimentos, sem ícone, para sobrar mais espaço vertical para os
+gráficos abaixo. O padding "de verdade" vem de .card-body/.value-box-area
+(bslib), não do .card-kpi em si -- por isso a sobrescrita é nesses
+elementos internos. */
+.card-kpi--compacto .card-body {
+  padding: 0.65rem 0.9rem !important;
+}
+
+.card-kpi--compacto .value-box-area {
+  padding: 0.55rem 0 !important;
+}
+
+.card-kpi--compacto .titulo {
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.card-kpi--compacto .valor {
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.linha-cartoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Card de KPI unico ocupando toda a largura, acima do grafico (em vez de
+ao lado), nas paginas com um unico card. */
+.linha-cartao-unico {
+  margin-bottom: 1.25rem;
+}
+
+.grade-graficos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.grafico-card,
+.mapa-card {
+  min-width: 0;
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.mapa-card {
+  padding: 0.5rem;
+}
+
+/* Filtros */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.filtros .form-group,
+.filtros .shiny-input-container {
+  margin-bottom: 0 !important;
+  min-width: 220px;
+}
+
+/* Tabelas + exportação */
+.tabela-card {
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.tabela-exportar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--cor-divisor-suave);
+}
+
+/* Colunas redimensionáveis pelo usuário (arrastando o canto inferior
+direito do cabeçalho), igual ao site estático -- o shiny-data-grid já usa
+uma <table> de verdade com <th style="width:Npx">, então o mesmo truque de
+CSS puro funciona aqui. */
+.shiny-data-grid table {
+  table-layout: fixed;
+}
+
+.shiny-data-grid th {
+  overflow: auto;
+  resize: horizontal;
+  white-space: normal;
+  min-width: 70px;
+}
+
+.shiny-data-grid td {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.botao-exportar {
+  appearance: none;
+  border: 1px solid var(--cor-borda) !important;
+  border-radius: 6px;
+  background: var(--cor-fundo-card) !important;
+  color: #1f2933 !important;
+  padding: 0.35rem 0.7rem !important;
+  font-size: 0.78rem !important;
+  font-weight: 600;
+}
+
+.botao-exportar:hover {
+  background: var(--cor-divisor-suave) !important;
+  border-color: var(--cor-marca) !important;
+}
+
+/* Botão "Limpar filtros" (mesmo visual do site estático: .botao-secundario). */
+.botao-limpar-filtros {
+  appearance: none;
+  border: 1px solid var(--cor-borda) !important;
+  border-radius: 6px !important;
+  background: var(--cor-fundo-card) !important;
+  color: #1f2933 !important;
+  padding: 0.5rem 0.9rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 600;
+}
+
+.botao-limpar-filtros:hover {
+  background: var(--cor-divisor-suave) !important;
+  border-color: var(--cor-marca) !important;
+}
+
+/* Mensagem exibida nas páginas de detalhe (Ação Orçamentária, Programa)
+antes de uma seleção ser feita no filtro correspondente. */
+.mensagem-selecao {
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 2.5rem 1.25rem;
+  text-align: center;
+  color: var(--cor-texto-suave);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Ação Orçamentária / Programa (páginas de detalhe) */
+.acao-card {
+  min-width: 0;
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.acao-card .rotulo {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--cor-texto-suave);
+  margin-bottom: 0.4rem;
+}
+
+.acao-card .valor {
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.acao-card--destaque {
+  text-align: center;
+}
+
+.acao-card--destaque .valor {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--cor-marca);
+}
+
+.acao-card ul.lista-simples {
+  margin: 0;
+  padding-left: 1.1rem;
+  max-height: 160px;
+  overflow-y: auto;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* Despesa por Órgão: listas-cartão */
+.lista-cartao {
+  min-width: 0;
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.lista-cartao-titulo {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.lista-cartao-corpo {
+  overflow-y: auto;
+  max-height: 320px;
+}
+
+.lista-cartao-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--cor-divisor-suave);
+}
+
+.lista-cartao-item:first-child {
+  border-top: none;
+}
+
+.lista-cartao-item .valor {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--cor-marca);
+  white-space: nowrap;
+}
+
+/* Sobre o Painel */
+.grade-blocos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.bloco {
+  min-width: 0;
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 1.1rem 1.25rem;
+}
+
+.bloco h5 {
+  margin: 0 0 8px;
+  color: var(--cor-marca);
+}
+
+.bloco p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--cor-texto-suave);
+}
+
+/* Links Úteis */
+.grade-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.link-card {
+  min-width: 0;
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.link-card h5 {
+  margin: 0;
+}
+
+.link-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+  flex-grow: 1;
+}
+
+.link-card a {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cor-marca);
+  text-decoration: none;
+}
+
+.glossario-nuvem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.termo-botao.ativo {
+  background-color: #0047ab;
+  border-color: #0047ab;
+  color: #ffffff;
+}
+
+.termo-botao.ativo:hover,
+.termo-botao.ativo:focus {
+  background-color: #003580;
+  border-color: #003580;
+  color: #ffffff;
+}
+
+/* Glossário */
+.glossario-painel {
+  background: var(--cor-fundo-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.glossario-painel h6 {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--cor-texto-suave);
+  font-size: 0.75rem;
+}
+
+.glossario-painel p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .grade-blocos,
+  .grade-cards,
+  .grade-links,
+  .grade-graficos,
+  .linha-cartoes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card de KPI: borda verde a esquerda, numero grande (maquete B). */
+.card-kpi {
+  background: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-left: 4px solid var(--cor-apoio);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: var(--sombra-card);
+}
+
+.card-kpi .valor {
+  display: block;
+  font-family: var(--fonte-titulo);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cor-apoio-escuro);
+  line-height: 1.2;
+}
+
+.card-kpi .titulo {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--cor-texto-suave);
+  margin-top: 2px;
+}
+
+.card-kpi--compacto {
+  padding: 10px 12px;
+}
+
+.card-kpi--compacto .valor {
+  font-size: 1.05rem;
+}
+
+/* Grafico + toggle "Ver como tabela" */
+.grafico-acessivel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.botao-ver-tabela {
+  align-self: flex-end;
+  appearance: none;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--cor-apoio-escuro);
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botao-ver-tabela:hover {
+  background: #eef6f3;
+  border-color: var(--cor-apoio);
+}
+
+.tabela-acessivel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tabela-acessivel th,
+.tabela-acessivel td {
+  border: 1px solid var(--cor-borda);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.tabela-acessivel th {
+  background: #f3f7f5;
+  font-weight: 600;
+}
+
+/* Barras de progresso (Visão Geral) -- ver componentes.barras_progresso(). */
+.barra-progresso-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 2px;
+}
+
+.barra-progresso-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  border-radius: 6px;
+  font: inherit;
+  color: inherit;
+}
+
+button.barra-progresso-item {
+  cursor: pointer;
+}
+
+button.barra-progresso-item:hover {
+  background: var(--cor-divisor-suave);
+}
+
+button.barra-progresso-item:focus-visible {
+  outline: 3px solid var(--cor-apoio);
+  outline-offset: 2px;
+}
+
+.barra-progresso-item.selecionada {
+  background: #eef1f4;
+}
+
+.barra-progresso-rotulo {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--cor-apoio-escuro);
+  margin-bottom: 5px;
+}
+
+.barra-progresso-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barra-progresso-trilha {
+  flex: 1;
+  height: 10px;
+  background: var(--cor-divisor-suave);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barra-progresso-preenchimento {
+  display: block;
+  height: 100%;
+  background: var(--cor-marca);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.barra-progresso-item.selecionada .barra-progresso-preenchimento {
+  background: var(--cor-apoio-escuro);
+}
+
+.barra-progresso-valor {
+  flex-shrink: 0;
+  min-width: 3.4em;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cor-apoio-escuro);
+}

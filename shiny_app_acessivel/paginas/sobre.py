@@ -56,12 +56,11 @@ def panel_ui():
         ),
         ui.hr(),
         ui.markdown(
-            "Esta é a versão **Shiny for Python + Shinylive** do painel, construída para "
-            "comparar com a versão em "
-            "[GitHub Pages](https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/) "
-            "(site estático). "
+            "Esta é a versão com **menu lateral** do painel, construída para comparar com a "
+            "versão com "
+            "[menu horizontal](https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel-menu-horizontal/). "
             "Mesmos dados, mesmas regras de negócio, mesmos filtros e exportações — a "
-            "diferença é só a ferramenta por trás de cada gráfico, tabela e mapa."
+            "diferença é só a disposição do menu de navegação."
         ),
         value="sobre",
     )

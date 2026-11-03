@@ -1,11 +1,13 @@
 """Painel PPAG-LOA 2027 — versão Shiny for Python / Shinylive (acessível).
 
-Mesmos dados, mesmas regras de negócio e mesma lógica reativa de
-`../shiny_app/` — ver ../docs/premissas.md e
+Ver ../docs/premissas.md e
 ../docs/superpowers/specs/2026-10-26-painel-shiny-acessivel-design.md.
-Só a camada de apresentação muda: menu lateral em vez de navbar
-horizontal, paleta/tipografia novas, toggle "Ver como tabela" em cada
-gráfico, foco visível e skip link.
+Menu lateral, paleta/tipografia próprias, toggle "Ver como tabela" em
+cada gráfico, foco visível e skip link.
+
+Existe também `../shiny_app_acessivel_menu_horizontal/` -- cópia idêntica
+desta, só com o menu disposto horizontalmente em vez de lateral, para
+comparação lado a lado (ver docstring de lá).
 """
 
 from pathlib import Path
@@ -69,7 +71,7 @@ app_ui = ui.page_bootstrap(
     ui.tags.a("Pular para o conteúdo", href="#conteudo-principal", class_="skip-link"),
     ui.tags.header(
         ui.span("Painel PPAG-LOA 2027", class_="app-titulo"),
-        ui.span("Versão acessível", class_="app-subtitulo"),
+        ui.span("Versão acessível — menu lateral", class_="app-subtitulo"),
         class_="app-cabecalho",
     ),
     ui.div(
@@ -85,17 +87,11 @@ app_ui = ui.page_bootstrap(
     ui.tags.footer(
         ui.hr(),
         ui.p(
-            "Construído com Shiny for Python + Shinylive — versão acessível, comparada com o ",
+            "Construído com Shiny for Python + Shinylive — versão acessível com menu lateral, "
+            "comparada com a ",
             ui.a(
-                "painel publicado no GitHub Pages",
-                href="https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/",
-                target="_blank",
-                rel="noopener noreferrer",
-            ),
-            " e com a ",
-            ui.a(
-                "versão Shiny original",
-                href="https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny/",
+                "versão com menu horizontal",
+                href="https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel-menu-horizontal/",
                 target="_blank",
                 rel="noopener noreferrer",
             ),
@@ -103,7 +99,7 @@ app_ui = ui.page_bootstrap(
             class_="text-muted small text-center mb-3",
         ),
     ),
-    title="Painel PPAG-LOA 2027 — Acessível",
+    title="Painel PPAG-LOA 2027 — Acessível (menu lateral)",
 )
 
 
