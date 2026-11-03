@@ -376,7 +376,7 @@ def barras_progresso(percentual_df, coluna_categoria: str, id: str, selecionavel
     for categoria, percentual in zip(percentual_df[coluna_categoria], percentual_df["percentual"]):
         categoria_escapada = html.escape(str(categoria))
         largura = max(0.0, min(100.0, float(percentual)))
-        texto_percentual = f"{percentual:.1f}%"
+        texto_percentual = f"{percentual:.2f}%".replace(".", ",")
         dados_attr = f' data-valor="{categoria_escapada}" aria-pressed="false"' if tag == "button" else ""
         linhas_html.append(
             f'<{tag}{tipo_attr} class="barra-progresso-item"{dados_attr}>'
