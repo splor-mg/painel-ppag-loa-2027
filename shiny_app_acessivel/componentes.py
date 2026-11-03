@@ -226,6 +226,47 @@ el.on("plotly_click", function(dados) {{
     )
 
 
+def _botao_ver_tabela(id_tabela: str) -> ui.Tag:
+    """Botão "Ver como tabela"/"Ocultar tabela" que alterna a visibilidade
+    da `<table id="{id_tabela}">` correspondente (ver `_tabela_semantica()`
+    e `script_preservar_estado_tabela()`).
+    """
+    return ui.tags.button(
+        "Ver como tabela",
+        type="button",
+        class_="botao-ver-tabela",
+        **{
+            "aria-expanded": "false",
+            "aria-controls": id_tabela,
+            "onclick": (
+                f"var t=document.getElementById('{id_tabela}');"
+                f"var oculto=t.hidden; t.hidden=!oculto;"
+                f"this.setAttribute('aria-expanded', String(oculto));"
+                f"this.textContent = oculto ? 'Ocultar tabela' : 'Ver como tabela';"
+            ),
+        },
+    )
+
+
+def _tabela_semantica(df, id_tabela: str, titulo: str) -> ui.HTML:
+    """Tabela semântica com os mesmos dados de `df`, alternada pelo botão
+    de `_botao_ver_tabela()` -- para quem usa leitor de tela/teclado, ou só
+    quer os números exatos sem passar o mouse sobre um gráfico/barra.
+    """
+    linhas_html = "".join(
+        "<tr>" + "".join(f"<td>{html.escape(str(valor))}</td>" for valor in linha) + "</tr>"
+        for linha in df.itertuples(index=False)
+    )
+    cabecalho_html = "".join(f'<th scope="col">{html.escape(str(coluna))}</th>' for coluna in df.columns)
+    titulo_escapado = html.escape(titulo)
+    return ui.HTML(
+        f'<table id="{id_tabela}" hidden class="tabela-acessivel" aria-label="{titulo_escapado}">'
+        f"<thead><tr>{cabecalho_html}</tr></thead>"
+        f"<tbody>{linhas_html}</tbody>"
+        f"</table>"
+    )
+
+
 def grafico_acessivel(fig, df, id: str, titulo: str, selecionavel: bool = False) -> ui.Tag:
     """Como `plotly_html()`, mas com um botão "Ver como tabela" ao lado
     que alterna a visibilidade de uma <table> semântica com os mesmos
@@ -253,36 +294,120 @@ def grafico_acessivel(fig, df, id: str, titulo: str, selecionavel: bool = False)
     `requestAnimationFrame`.
     """
     id_tabela = f"{id}__tabela"
-    linhas_html = "".join(
-        "<tr>" + "".join(f"<td>{html.escape(str(valor))}</td>" for valor in linha) + "</tr>"
-        for linha in df.itertuples(index=False)
-    )
-    cabecalho_html = "".join(f'<th scope="col">{html.escape(str(coluna))}</th>' for coluna in df.columns)
-    titulo_escapado = html.escape(titulo)
-
     return ui.div(
-        ui.tags.button(
-            "Ver como tabela",
-            type="button",
-            class_="botao-ver-tabela",
-            **{
-                "aria-expanded": "false",
-                "aria-controls": id_tabela,
-                "onclick": (
-                    f"var t=document.getElementById('{id_tabela}');"
-                    f"var oculto=t.hidden; t.hidden=!oculto;"
-                    f"this.setAttribute('aria-expanded', String(oculto));"
-                    f"this.textContent = oculto ? 'Ocultar tabela' : 'Ver como tabela';"
-                ),
-            },
-        ),
+        _botao_ver_tabela(id_tabela),
         plotly_html(fig, id=id, selecionavel=selecionavel),
-        ui.HTML(
-            f'<table id="{id_tabela}" hidden class="tabela-acessivel" aria-label="{titulo_escapado}">'
-            f"<thead><tr>{cabecalho_html}</tr></thead>"
-            f"<tbody>{linhas_html}</tbody>"
-            f"</table>"
-        ),
+        _tabela_semantica(df, id_tabela, titulo),
+        class_="grafico-acessivel",
+    )
+
+
+def script_barra_progresso_clique() -> ui.Tag:
+    """Registra (uma única vez, no <head> do app) o clique nas barras de
+    progresso selecionáveis (`barras_progresso(..., selecionavel=True)`).
+
+    Equivalente ao `plotly_click` de `plotly_html()`, só que via um único
+    handler delegado -- os botões ainda não existem quando este script é
+    parseado (cada chamada de `barras_progresso()` vive dentro de um
+    `@render.ui`), e cada página pode ter mais de uma lista de barras
+    (daí o escopo "desmarcar as outras" ser só dentro do mesmo
+    `[data-grafico-id]`, não a página inteira).
+    """
+    return ui.tags.script(
+        """
+(function registrar() {
+  if (window.Shiny && Shiny.setInputValue) {
+    document.addEventListener("click", function(ev) {
+      var botao = ev.target.closest(".barra-progresso-item");
+      if (!botao) return;
+      var lista = botao.closest("[data-grafico-id]");
+      if (!lista) return;
+      var idGrafico = lista.getAttribute("data-grafico-id");
+      var valor = botao.getAttribute("data-valor");
+      var jaSelecionada = botao.classList.contains("selecionada");
+      lista.querySelectorAll(".barra-progresso-item.selecionada").forEach(function(b) {
+        b.classList.remove("selecionada");
+        b.setAttribute("aria-pressed", "false");
+      });
+      if (jaSelecionada) {
+        Shiny.setInputValue(idGrafico + "_selecionado", null, {priority: "event"});
+      } else {
+        botao.classList.add("selecionada");
+        botao.setAttribute("aria-pressed", "true");
+        Shiny.setInputValue(idGrafico + "_selecionado", valor, {priority: "event"});
+      }
+    });
+  } else {
+    setTimeout(registrar, 50);
+  }
+})();
+"""
+    )
+
+
+def barras_progresso(percentual_df, coluna_categoria: str, id: str, selecionavel: bool = False) -> ui.HTML:
+    """Lista de barras de progresso (estilo "loading bar") -- alternativa
+    visual às barras horizontais do Plotly (`graficos.grafico_percentual_horizontal`),
+    usada na Visão Geral.
+
+    `percentual_df` tem 2 colunas, `coluna_categoria` e "percentual" (ver
+    `graficos.percentuais_por_categoria()`), já ordenado da maior pra
+    menor; o preenchimento de cada barra é a largura literal do
+    percentual (não escalado pelo maior valor, como fazia o eixo do
+    Plotly).
+
+    `selecionavel=True` (exige `id`) torna cada linha um `<button>` real
+    -- ao contrário das barras do Plotly, que não são focáveis (ver
+    limitação anotada em `plotly_html()`), estas são navegáveis e
+    ativáveis por teclado de graça, por serem botões de verdade. O
+    clique liga ao mesmo input reativo `<id>_selecionado` usado pelo
+    crossfilter entre os gráficos da página (clique de novo na mesma
+    barra desseleciona) -- tratado por `script_barra_progresso_clique()`
+    (registrado uma vez no <head> do app), que também alterna a classe
+    `selecionada`/`aria-pressed` do botão clicado. Isso não dá pra fazer
+    reativamente a partir do Python porque esta mesma lista não se
+    re-renderiza quando a PRÓPRIA seleção muda -- só quando a seleção do
+    OUTRO gráfico da página invalida sua base de dados (mesmo
+    comportamento do crossfilter via Plotly).
+    """
+    tag = "button" if selecionavel and id else "div"
+    tipo_attr = ' type="button"' if tag == "button" else ""
+    linhas_html = []
+    for categoria, percentual in zip(percentual_df[coluna_categoria], percentual_df["percentual"]):
+        categoria_escapada = html.escape(str(categoria))
+        largura = max(0.0, min(100.0, float(percentual)))
+        texto_percentual = f"{percentual:.1f}%"
+        dados_attr = f' data-valor="{categoria_escapada}" aria-pressed="false"' if tag == "button" else ""
+        linhas_html.append(
+            f'<{tag}{tipo_attr} class="barra-progresso-item"{dados_attr}>'
+            f'<span class="barra-progresso-rotulo">{categoria_escapada}</span>'
+            f'<span class="barra-progresso-linha">'
+            f'<span class="barra-progresso-trilha">'
+            f'<span class="barra-progresso-preenchimento" style="width: {largura:.4f}%"></span>'
+            f"</span>"
+            f'<span class="barra-progresso-valor">{texto_percentual}</span>'
+            f"</span>"
+            f"</{tag}>"
+        )
+    id_attr = f' data-grafico-id="{id}"' if tag == "button" else ""
+    return ui.HTML(f'<div class="barra-progresso-lista"{id_attr}>' + "".join(linhas_html) + "</div>")
+
+
+def barras_progresso_acessivel(
+    percentual_df, coluna_categoria: str, tabela_df, id: str, titulo: str, selecionavel: bool = False
+) -> ui.Tag:
+    """Como `grafico_acessivel()`, mas com `barras_progresso()` no lugar
+    do gráfico Plotly (ver sua docstring para o detalhe do clique e do
+    crossfilter). `tabela_df` é o que aparece na tabela alternável (pode
+    trazer colunas diferentes de `percentual_df`, ex. valores em R$ em
+    vez de percentual).
+    """
+    id_tabela = f"{id}__tabela"
+    return ui.div(
+        _botao_ver_tabela(id_tabela),
+        ui.h3(titulo, class_="lista-cartao-titulo"),
+        barras_progresso(percentual_df, coluna_categoria, id=id, selecionavel=selecionavel),
+        _tabela_semantica(tabela_df, id_tabela, titulo),
         class_="grafico-acessivel",
     )
 

@@ -709,3 +709,86 @@ antes de uma seleção ser feita no filtro correspondente. */
   background: #f3f7f5;
   font-weight: 600;
 }
+
+/* Barras de progresso (Visão Geral) -- ver componentes.barras_progresso(). */
+.barra-progresso-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 2px;
+}
+
+.barra-progresso-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  border-radius: 6px;
+  font: inherit;
+  color: inherit;
+}
+
+button.barra-progresso-item {
+  cursor: pointer;
+}
+
+button.barra-progresso-item:hover {
+  background: var(--cor-divisor-suave);
+}
+
+button.barra-progresso-item:focus-visible {
+  outline: 3px solid var(--cor-apoio);
+  outline-offset: 2px;
+}
+
+.barra-progresso-item.selecionada {
+  background: #eef1f4;
+}
+
+.barra-progresso-rotulo {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--cor-apoio-escuro);
+  margin-bottom: 5px;
+}
+
+.barra-progresso-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barra-progresso-trilha {
+  flex: 1;
+  height: 10px;
+  background: var(--cor-divisor-suave);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barra-progresso-preenchimento {
+  display: block;
+  height: 100%;
+  background: var(--cor-marca);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.barra-progresso-item.selecionada .barra-progresso-preenchimento {
+  background: var(--cor-apoio-escuro);
+}
+
+.barra-progresso-valor {
+  flex-shrink: 0;
+  min-width: 3.4em;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cor-apoio-escuro);
+}

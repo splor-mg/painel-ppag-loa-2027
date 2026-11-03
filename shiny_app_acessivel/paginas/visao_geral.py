@@ -1,8 +1,14 @@
 from shiny import reactive, render, ui
 
 import dados_app as dados
-from componentes import botao_limpar_filtros, card_kpi, grafico_acessivel, limpar_selecao_graficos, selecao_grafico
-from graficos import grafico_percentual_horizontal
+from componentes import (
+    barras_progresso_acessivel,
+    botao_limpar_filtros,
+    card_kpi,
+    limpar_selecao_graficos,
+    selecao_grafico,
+)
+from graficos import percentuais_por_categoria
 from utils import formatar_bilhoes, formatar_moeda
 
 
@@ -65,27 +71,33 @@ def register_server(input, output, session):
     @render.ui
     def vg_grafico_area():
         df = _base_para_area()
-        fig = grafico_percentual_horizontal(
-            df, "area_tematica", "valor", "Previsão 2027 por Área Temática"
-        )
+        percentual_df = percentuais_por_categoria(df, "area_tematica", "valor")
         tabela = df.groupby("area_tematica", as_index=False)["valor"].sum().rename(
             columns={"area_tematica": "Área Temática", "valor": "Valor (R$)"}
         )
         tabela["Valor (R$)"] = tabela["Valor (R$)"].map(formatar_moeda)
-        return grafico_acessivel(
-            fig, tabela, id="vg_grafico_area", titulo="Previsão 2027 por Área Temática", selecionavel=True
+        return barras_progresso_acessivel(
+            percentual_df,
+            "area_tematica",
+            tabela,
+            id="vg_grafico_area",
+            titulo="Previsão 2027 por Área Temática",
+            selecionavel=True,
         )
 
     @render.ui
     def vg_grafico_setor():
         df = _base_para_setor()
-        fig = grafico_percentual_horizontal(
-            df, "setor_governo", "valor", "Previsão 2027 por Setor de Governo"
-        )
+        percentual_df = percentuais_por_categoria(df, "setor_governo", "valor")
         tabela = df.groupby("setor_governo", as_index=False)["valor"].sum().rename(
             columns={"setor_governo": "Setor de Governo", "valor": "Valor (R$)"}
         )
         tabela["Valor (R$)"] = tabela["Valor (R$)"].map(formatar_moeda)
-        return grafico_acessivel(
-            fig, tabela, id="vg_grafico_setor", titulo="Previsão 2027 por Setor de Governo", selecionavel=True
+        return barras_progresso_acessivel(
+            percentual_df,
+            "setor_governo",
+            tabela,
+            id="vg_grafico_setor",
+            titulo="Previsão 2027 por Setor de Governo",
+            selecionavel=True,
         )

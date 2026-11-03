@@ -55,6 +55,23 @@ def grafico_percentual_horizontal(
     return fig
 
 
+def percentuais_por_categoria(
+    df: pd.DataFrame, coluna_categoria: str, coluna_valor: str
+) -> pd.DataFrame:
+    """Participação percentual de cada categoria no total de `coluna_valor`,
+    ordenada da maior pra menor -- mesma agregação de
+    `grafico_percentual_horizontal()`, mas sem montar a figura Plotly
+    (usada pelas barras de progresso da Visão Geral, ver
+    `componentes.barras_progresso()`).
+    """
+    categorias = df[coluna_categoria].str.strip()
+    agrupado = df.groupby(categorias)[coluna_valor].sum()
+    percentual = (agrupado / agrupado.sum() * 100).sort_values(ascending=False)
+    resultado = percentual.reset_index()
+    resultado.columns = [coluna_categoria, "percentual"]
+    return resultado
+
+
 def grafico_absoluto_vertical(
     df: pd.DataFrame, coluna_categoria: str, coluna_valor: str, titulo: str
 ) -> "px.Figure":

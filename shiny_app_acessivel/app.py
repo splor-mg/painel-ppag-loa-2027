@@ -14,6 +14,7 @@ from shiny import App, ui
 
 from componentes import (
     plotly_head,
+    script_barra_progresso_clique,
     script_limpar_selecao_grafico,
     script_preservar_estado_tabela,
     script_skip_link,
@@ -52,6 +53,7 @@ app_ui = ui.page_bootstrap(
     ui.tags.head(
         plotly_head(),
         script_limpar_selecao_grafico(),
+        script_barra_progresso_clique(),
         script_skip_link(),
         script_preservar_estado_tabela(),
         ui.tags.link(rel="preconnect", href="https://fonts.googleapis.com"),
