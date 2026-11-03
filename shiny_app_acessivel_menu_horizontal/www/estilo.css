@@ -73,40 +73,38 @@ select:focus-visible,
 /* navset_pill (ao contrário de navset_pill_list, usado na variante de
 menu lateral) não separa nav e conteúdo em colunas Bootstrap -- o
 <ul class="nav nav-pills"> vem direto, seguido do .tab-content. Estiliza
-o próprio <ul> como uma faixa horizontal, azul institucional (mesma cor
-de marca usada na variante de menu lateral), que quebra linha em telas
-estreitas em vez de forçar rolagem horizontal. */
+o próprio <ul> como uma faixa horizontal "limpa" (fundo claro, sem caixa),
+no mesmo estilo de abas sublinhadas do antigo site estático (`.menu`/
+`.menu-item` -- ver git history de site_estatico/style.css, removido):
+item ativo marcado por uma borda inferior azul, não por um fundo sólido. */
 .app-conteudo .nav-pills {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 4px;
-  background: var(--cor-apoio-escuro);
-  border-radius: 10px;
-  padding: 10px;
+  border-bottom: 1px solid var(--cor-borda);
   margin-bottom: 18px;
 }
 
 .app-conteudo .nav-pills .nav-link {
-  color: #cfe0f0;
+  color: var(--cor-texto-suave);
   font-weight: 600;
   font-size: 0.85rem;
-  border-radius: 7px;
-  padding: 9px 14px;
+  border-radius: 0;
+  padding: 10px 14px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.app-conteudo .nav-pills .nav-link:hover {
+  color: var(--cor-apoio-escuro);
 }
 
 .app-conteudo .nav-pills .nav-link.active {
-  background: var(--cor-apoio);
-  color: #ffffff;
-}
-
-/* O anel de foco padrão (--cor-apoio) tem ótimo contraste contra o novo
-fundo azul-marinho do menu (branco: 15.5:1 contra o fundo normal, 8.4:1
-contra o item ativo), mas a regra abaixo é mantida porque o anel precisa
-se destacar tanto do item ativo (azul) quanto do fundo (azul-marinho) ao
-mesmo tempo -- usar a própria --cor-apoio no anel se perderia contra o
-item ativo, que tem essa mesma cor de fundo. */
-.app-conteudo .nav-pills .nav-link:focus-visible {
-  outline-color: #ffffff;
+  background: none;
+  color: var(--cor-apoio-escuro);
+  border-bottom-color: var(--cor-marca);
 }
 
 /* Identidade visual do painel PPAG-LOA 2027, por cima do tema bslib
