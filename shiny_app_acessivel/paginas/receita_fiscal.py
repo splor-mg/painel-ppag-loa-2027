@@ -26,16 +26,13 @@ def panel_ui():
         "Receita Fiscal",
         ui.div("Receita Fiscal", class_="titulo-pagina"),
         ui.div(
-            filtro_selectize("rf_uo", "UO", uos),
-            filtro_selectize("rf_fonte", "Fonte de Recursos", fontes),
+            filtro_selectize("rf_uo", "Unidade Orçamentária", uos, multiplo=True),
+            filtro_selectize("rf_fonte", "Fonte de Recursos", fontes, multiplo=True),
             botao_limpar_filtros("rf_limpar"),
             class_="filtros",
         ),
-        ui.div(
-            ui.output_ui("rf_card"),
-            ui.div(ui.output_ui("rf_grafico"), class_="grafico-card"),
-            class_="linha-card-grafico",
-        ),
+        ui.div(ui.output_ui("rf_card"), class_="linha-cartao-unico"),
+        ui.div(ui.output_ui("rf_grafico"), class_="grafico-card"),
         ui.div(
             botoes_exportar("rf_csv", "rf_xlsx"),
             ui.output_data_frame("rf_tabela"),
@@ -50,9 +47,9 @@ def register_server(input, output, session):
     def linhas_filtradas() -> pd.DataFrame:
         df = dados.receita_fiscal
         if input.rf_uo():
-            df = df[df["UO"] == input.rf_uo()]
+            df = df[df["UO"].isin(input.rf_uo())]
         if input.rf_fonte():
-            df = df[df["fonte_de_recursos"] == input.rf_fonte()]
+            df = df[df["fonte_de_recursos"].isin(input.rf_fonte())]
         return df
 
     @reactive.calc
@@ -81,8 +78,8 @@ def register_server(input, output, session):
     @reactive.effect
     @reactive.event(input.rf_limpar)
     async def _limpar():
-        ui.update_selectize("rf_uo", selected="")
-        ui.update_selectize("rf_fonte", selected="")
+        ui.update_selectize("rf_uo", selected=[])
+        ui.update_selectize("rf_fonte", selected=[])
         await limpar_selecao_graficos(session, "rf_grafico")
 
     @render.ui

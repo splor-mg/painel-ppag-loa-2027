@@ -32,11 +32,11 @@ def panel_ui():
         "Regionalização",
         ui.div("Regionalização", class_="titulo-pagina"),
         ui.div(
-            filtro_selectize("rg_uo", "Unidade Orçamentária", uos),
-            filtro_selectize("rg_acao", "Ação Orçamentária", acoes),
-            filtro_selectize("rg_regiao", "Região Geográfica Intermediária", regioes),
-            filtro_selectize("rg_municipio", "Município", municipios, "Todos"),
-            filtro_selectize("rg_produto", "Produto", produtos, "Todos"),
+            filtro_selectize("rg_uo", "Unidade Orçamentária", uos, multiplo=True),
+            filtro_selectize("rg_acao", "Ação Orçamentária", acoes, multiplo=True),
+            filtro_selectize("rg_regiao", "Região Geográfica Intermediária", regioes, multiplo=True),
+            filtro_selectize("rg_municipio", "Município", municipios, "Todos", multiplo=True),
+            filtro_selectize("rg_produto", "Produto", produtos, "Todos", multiplo=True),
             botao_limpar_filtros("rg_limpar"),
             class_="filtros",
         ),
@@ -54,15 +54,15 @@ def panel_ui():
 def _aplicar_filtros(input, ignorar_municipio: bool) -> pd.DataFrame:
     df = dados.regionalizacao
     if input.rg_uo():
-        df = df[df["uo_label"] == input.rg_uo()]
+        df = df[df["uo_label"].isin(input.rg_uo())]
     if input.rg_acao():
-        df = df[df["acao_label"] == input.rg_acao()]
+        df = df[df["acao_label"].isin(input.rg_acao())]
     if input.rg_regiao():
-        df = df[df["regiao"] == input.rg_regiao()]
+        df = df[df["regiao"].isin(input.rg_regiao())]
     if input.rg_produto():
-        df = df[df["produto"] == input.rg_produto()]
+        df = df[df["produto"].isin(input.rg_produto())]
     if not ignorar_municipio and input.rg_municipio():
-        df = df[df["municipio"] == input.rg_municipio()]
+        df = df[df["municipio"].isin(input.rg_municipio())]
     return df
 
 
@@ -77,16 +77,17 @@ def register_server(input, output, session):
             ("rg_municipio", "municipio", "Todos"),
             ("rg_produto", "produto", "Todos"),
         ],
+        multiplo=True,
     )
 
     @reactive.effect
     @reactive.event(input.rg_limpar)
     def _limpar():
-        ui.update_selectize("rg_uo", selected="")
-        ui.update_selectize("rg_acao", selected="")
-        ui.update_selectize("rg_regiao", selected="")
-        ui.update_selectize("rg_municipio", selected="")
-        ui.update_selectize("rg_produto", selected="")
+        ui.update_selectize("rg_uo", selected=[])
+        ui.update_selectize("rg_acao", selected=[])
+        ui.update_selectize("rg_regiao", selected=[])
+        ui.update_selectize("rg_municipio", selected=[])
+        ui.update_selectize("rg_produto", selected=[])
 
     @reactive.calc
     def base_sem_municipio() -> pd.DataFrame:
@@ -138,17 +139,16 @@ def register_server(input, output, session):
     def rg_mapa():
         linhas = base_sem_municipio()
         valores_por_ibge = linhas.groupby("municipio_ibge")["valor"].sum()
-        municipio_sel = input.rg_municipio()
-        ibge_sel = None
-        if municipio_sel:
-            correspondentes = linhas.loc[linhas["municipio"] == municipio_sel, "municipio_ibge"]
-            if len(correspondentes):
-                ibge_sel = correspondentes.iloc[0]
+        municipios_sel = input.rg_municipio()
+        ibges_sel = set()
+        if municipios_sel:
+            correspondentes = linhas.loc[linhas["municipio"].isin(municipios_sel), "municipio_ibge"]
+            ibges_sel = set(correspondentes)
 
         geojson = dados.mg_municipios_geojson
         ibges = [f["properties"]["id"] for f in geojson["features"]]
         nomes = [f["properties"]["name"] for f in geojson["features"]]
-        z = [1 if ibge == ibge_sel else 0 for ibge in ibges]
+        z = [1 if ibge in ibges_sel else 0 for ibge in ibges]
         textos_valor = [formatar_moeda(valores_por_ibge.get(ibge, 0)) for ibge in ibges]
 
         fig = go.Figure(

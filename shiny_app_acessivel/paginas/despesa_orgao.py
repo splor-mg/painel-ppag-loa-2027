@@ -13,15 +13,12 @@ def panel_ui():
         "Despesa por Órgão",
         ui.div("Despesa por Órgão", class_="titulo-pagina"),
         ui.div(
-            filtro_selectize("do_uo", "Unidade Orçamentária", uos),
+            filtro_selectize("do_uo", "Unidade Orçamentária", uos, multiplo=True),
             botao_limpar_filtros("do_limpar"),
             class_="filtros",
         ),
-        ui.div(
-            ui.output_ui("do_card"),
-            ui.div(ui.output_ui("do_grafico"), class_="grafico-card"),
-            class_="linha-card-grafico",
-        ),
+        ui.div(ui.output_ui("do_card"), class_="linha-cartao-unico"),
+        ui.div(ui.output_ui("do_grafico"), class_="grafico-card"),
         ui.div(
             ui.div(
                 ui.h5("Despesa por Ação Orçamentária", class_="lista-cartao-titulo"),
@@ -52,7 +49,7 @@ def register_server(input, output, session):
     def base_filtrada() -> pd.DataFrame:
         df = dados.despesa_orgao
         if input.do_uo():
-            df = df[df["uo_label"] == input.do_uo()]
+            df = df[df["uo_label"].isin(input.do_uo())]
         return df
 
     @reactive.calc
@@ -69,7 +66,7 @@ def register_server(input, output, session):
     @reactive.effect
     @reactive.event(input.do_limpar)
     def _limpar():
-        ui.update_selectize("do_uo", selected="")
+        ui.update_selectize("do_uo", selected=[])
 
     @render.ui
     def do_card():

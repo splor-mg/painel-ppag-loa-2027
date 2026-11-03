@@ -299,22 +299,32 @@ def escolhas_filtro(opcoes: list[str], placeholder_vazio: str = "Todas") -> dict
 
 
 def filtro_selectize(
-    id: str, label: str, opcoes: list[str], placeholder_vazio: str = "Todas"
+    id: str, label: str, opcoes: list[str], placeholder_vazio: str = "Todas", multiplo: bool = False
 ) -> ui.Tag:
     """Select com busca (`input_selectize` já busca nativamente, mas precisa
     de `placeholder` explícito para mostrar "Pesquisar" na caixa, como no
     site estático).
+
+    `multiplo=True` permite selecionar mais de uma opção de uma vez --
+    `input.<id>()` passa a devolver uma tupla (vazia quando nada está
+    selecionado) em vez de uma string única, então todo código que lê
+    esse filtro precisa comparar com `.isin(...)` em vez de `==`. Sem
+    sentido ter uma opção em branco na lista nesse modo (não há "nada"
+    pra selecionar explicitamente -- basta não marcar nenhuma).
     """
     return ui.input_selectize(
         id,
         label,
-        choices=escolhas_filtro(opcoes, placeholder_vazio),
-        selected="",
+        choices={o: o for o in opcoes} if multiplo else escolhas_filtro(opcoes, placeholder_vazio),
+        selected=[] if multiplo else "",
+        multiple=multiplo,
         options={"placeholder": "Pesquisar"},
     )
 
 
-def registrar_filtros_cruzados(input, df, filtros: list[tuple[str, str, str]]) -> None:
+def registrar_filtros_cruzados(
+    input, df, filtros: list[tuple[str, str, str]], multiplo: bool = False
+) -> None:
     """Registra o efeito "crossfilter" entre os filtros de uma página:
     selecionar uma opção em qualquer um deles restringe as opções
     disponíveis nos demais — e vice-versa, não importa por qual filtro o
@@ -324,6 +334,12 @@ def registrar_filtros_cruzados(input, df, filtros: list[tuple[str, str, str]]) -
 
     `filtros` é uma lista de tuplas (id_do_input, nome_da_coluna,
     placeholder_quando_vazio), uma por filtro da página.
+
+    `multiplo=True` trata cada filtro da lista como multi-seleção
+    (`filtro_selectize(..., multiplo=True)`): a comparação vira
+    `.isin(...)` em vez de `==`, e uma seleção que continue válida
+    depois do crossfilter é preservada -- só as opções que deixaram de
+    existir saem da seleção, em vez de a seleção inteira ser zerada.
     """
 
     @reactive.effect
@@ -336,14 +352,19 @@ def registrar_filtros_cruzados(input, df, filtros: list[tuple[str, str, str]]) -
                     continue
                 valor = selecionados[outro_id]
                 if valor:
-                    subconjunto = subconjunto[subconjunto[outra_coluna] == valor]
+                    if multiplo:
+                        subconjunto = subconjunto[subconjunto[outra_coluna].isin(valor)]
+                    else:
+                        subconjunto = subconjunto[subconjunto[outra_coluna] == valor]
             validos = sorted(v for v in subconjunto[coluna].dropna().unique() if v != "")
             atual = selecionados[id_input]
-            ui.update_selectize(
-                id_input,
-                choices=escolhas_filtro(validos, placeholder),
-                selected=atual if atual in validos else "",
-            )
+            if multiplo:
+                novo_selecionado = [v for v in atual if v in validos]
+                novas_escolhas = {o: o for o in validos}
+            else:
+                novo_selecionado = atual if atual in validos else ""
+                novas_escolhas = escolhas_filtro(validos, placeholder)
+            ui.update_selectize(id_input, choices=novas_escolhas, selected=novo_selecionado)
 
 
 def estilo_moeda(df, *colunas: str) -> list[dict]:

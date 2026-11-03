@@ -295,18 +295,16 @@ elementos internos. */
   line-height: 1.2;
 }
 
-.linha-card-grafico {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-  align-items: stretch;
-}
-
 .linha-cartoes {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Card de KPI unico ocupando toda a largura, acima do grafico (em vez de
+ao lado), nas paginas com um unico card. */
+.linha-cartao-unico {
   margin-bottom: 1.25rem;
 }
 
@@ -628,7 +626,6 @@ antes de uma seleção ser feita no filtro correspondente. */
   .grade-cards,
   .grade-links,
   .grade-graficos,
-  .linha-card-grafico,
   .linha-cartoes {
     grid-template-columns: 1fr;
   }

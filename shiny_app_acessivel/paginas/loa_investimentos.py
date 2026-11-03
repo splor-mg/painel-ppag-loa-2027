@@ -14,7 +14,7 @@ def panel_ui():
         "LOA Investimentos",
         ui.div("LOA Investimentos", class_="titulo-pagina"),
         ui.div(
-            filtro_selectize("li_uo", "Unidade Orçamentária", dados.loa_investimentos_uo),
+            filtro_selectize("li_uo", "Unidade Orçamentária", dados.loa_investimentos_uo, multiplo=True),
             botao_limpar_filtros("li_limpar"),
             class_="filtros",
         ),
@@ -37,14 +37,14 @@ def register_server(input, output, session):
     def receita_filtrada() -> pd.DataFrame:
         df = dados.loa_investimentos_receita
         if input.li_uo():
-            df = df[df["uo_label"] == input.li_uo()]
+            df = df[df["uo_label"].isin(input.li_uo())]
         return df
 
     @reactive.calc
     def despesa_filtrada() -> pd.DataFrame:
         df = dados.loa_investimentos_despesa
         if input.li_uo():
-            df = df[df["uo_label"] == input.li_uo()]
+            df = df[df["uo_label"].isin(input.li_uo())]
         return df
 
     @reactive.calc
@@ -93,7 +93,7 @@ def register_server(input, output, session):
     @reactive.effect
     @reactive.event(input.li_limpar)
     async def _limpar():
-        ui.update_selectize("li_uo", selected="")
+        ui.update_selectize("li_uo", selected=[])
         # Chamado direto aqui (não só no efeito abaixo) porque, se a UO já
         # estava em branco, `input.li_uo()` não muda de valor e o efeito que
         # observa essa mudança não dispara.

@@ -39,7 +39,7 @@ def panel_ui():
     campos = []
     for id_input, coluna, rotulo in _FILTROS:
         opcoes = sorted(dados.qdd[coluna].unique())
-        campos.append(filtro_selectize(id_input, rotulo, opcoes))
+        campos.append(filtro_selectize(id_input, rotulo, opcoes, multiplo=True))
     campos.append(botao_limpar_filtros("qdd_limpar"))
 
     return ui.nav_panel(
@@ -58,7 +58,7 @@ def panel_ui():
 
 def register_server(input, output, session):
     registrar_filtros_cruzados(
-        input, dados.qdd, [(id_input, coluna, "Todas") for id_input, coluna, _ in _FILTROS]
+        input, dados.qdd, [(id_input, coluna, "Todas") for id_input, coluna, _ in _FILTROS], multiplo=True
     )
 
     @reactive.calc
@@ -67,7 +67,7 @@ def register_server(input, output, session):
         for id_input, coluna, _ in _FILTROS:
             valor = getattr(input, id_input)()
             if valor:
-                df = df[df[coluna] == valor]
+                df = df[df[coluna].isin(valor)]
         return df
 
     @reactive.calc
@@ -83,7 +83,7 @@ def register_server(input, output, session):
     @reactive.event(input.qdd_limpar)
     def _limpar():
         for id_input, _, _ in _FILTROS:
-            ui.update_selectize(id_input, selected="")
+            ui.update_selectize(id_input, selected=[])
 
     @render.data_frame
     def qdd_tabela():
