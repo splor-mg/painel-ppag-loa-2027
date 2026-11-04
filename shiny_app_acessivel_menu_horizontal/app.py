@@ -70,7 +70,7 @@ app_ui = ui.page_bootstrap(
     ui.tags.a("Pular para o conteúdo", href="#conteudo-principal", class_="skip-link"),
     ui.tags.header(
         ui.span("Painel PPAG-LOA 2027", class_="app-titulo"),
-        ui.span("Versão acessível — menu horizontal", class_="app-subtitulo"),
+        ui.span("Versão acessível", class_="app-subtitulo"),
         class_="app-cabecalho",
     ),
     ui.div(
@@ -84,19 +84,11 @@ app_ui = ui.page_bootstrap(
     ui.tags.footer(
         ui.hr(),
         ui.p(
-            "Construído com Shiny for Python + Shinylive — versão acessível com menu horizontal, "
-            "comparada com a ",
-            ui.a(
-                "versão com menu lateral",
-                href="https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel/",
-                target="_blank",
-                rel="noopener noreferrer",
-            ),
-            ".",
+            "Construído com Shiny for Python + Shinylive.",
             class_="text-muted small text-center mb-3",
         ),
     ),
-    title="Painel PPAG-LOA 2027 — Acessível (menu horizontal)",
+    title="Painel PPAG-LOA 2027 — Acessível",
 )
 
 

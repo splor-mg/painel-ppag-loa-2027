@@ -54,14 +54,6 @@ def panel_ui():
             ),
             class_="grade-blocos",
         ),
-        ui.hr(),
-        ui.markdown(
-            "Esta é a versão com **menu horizontal** do painel, construída para comparar com "
-            "a versão com "
-            "[menu lateral](https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel/). "
-            "Mesmos dados, mesmas regras de negócio, mesmos filtros e exportações — a "
-            "diferença é só a disposição do menu de navegação."
-        ),
         value="sobre",
     )
 
