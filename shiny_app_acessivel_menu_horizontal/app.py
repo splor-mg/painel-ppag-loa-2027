@@ -70,7 +70,6 @@ app_ui = ui.page_bootstrap(
     ui.tags.a("Pular para o conteúdo", href="#conteudo-principal", class_="skip-link"),
     ui.tags.header(
         ui.span("Painel PPAG-LOA 2027", class_="app-titulo"),
-        ui.span("Versão acessível", class_="app-subtitulo"),
         class_="app-cabecalho",
     ),
     ui.div(
