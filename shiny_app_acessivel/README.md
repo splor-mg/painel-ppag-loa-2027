@@ -67,4 +67,4 @@ poetry run shinylive export shiny_app_acessivel dist_shiny_acessivel
 ```
 
 Publicado em:
-https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel/
+https://splor-mg.github.io/painel-ppag-loa-2027/shiny-acessivel/

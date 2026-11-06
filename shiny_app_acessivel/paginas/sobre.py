@@ -58,7 +58,7 @@ def panel_ui():
         ui.markdown(
             "Esta é a versão com **menu lateral** do painel, construída para comparar com a "
             "versão com "
-            "[menu horizontal](https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel-menu-horizontal/). "
+            "[menu horizontal](https://splor-mg.github.io/painel-ppag-loa-2027/). "
             "Mesmos dados, mesmas regras de negócio, mesmos filtros e exportações — a "
             "diferença é só a disposição do menu de navegação."
         ),

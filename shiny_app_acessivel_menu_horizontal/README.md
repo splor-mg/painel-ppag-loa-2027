@@ -1,12 +1,9 @@
-# Painel PPAG-LOA 2027 — versão Shiny for Python + Shinylive (acessível, menu horizontal)
+# Painel PPAG-LOA 2027 — Shiny for Python + Shinylive (acessível, menu horizontal)
 
-Cópia de `../shiny_app_acessivel/` (mesmos dados, mesma lógica reativa,
-mesmos componentes) criada **só** para comparar a disposição do menu de
-navegação lado a lado: aqui ele fica horizontal, logo abaixo do título
-(`ui.navset_pill`), em vez de lateral (`ui.navset_pill_list`) — essa é a
-única diferença entre os dois painéis. Depois da comparação, uma das duas
-variantes deve virar a final e a outra ser removida; até lá, veja
-`../shiny_app_acessivel/README.md` para o resto da arquitetura (idêntica).
+Versão oficial do painel: navegação por menu horizontal (`ui.navset_pill`)
+logo abaixo do título. A arquitetura (dados, lógica reativa, componentes)
+é a mesma descrita em `../shiny_app_acessivel/README.md`, que mantém a
+variante com menu lateral.
 
 ## Rodar localmente
 
@@ -18,20 +15,18 @@ Pré-requisito: ambiente Poetry da raiz do repositório instalado
 poetry run python gerar_dados_shiny.py   # gera/atualiza shiny_app_acessivel/data
 # copiar shiny_app_acessivel/data/ pra cá (data/) se os dados mudaram -- ver docstring de gerar_dados_shiny.py
 poetry run shiny run shiny_app_acessivel_menu_horizontal/app.py
-poetry run shinylive export shiny_app_acessivel_menu_horizontal dist_shiny_acessivel_menu_horizontal
-python -m http.server --directory dist_shiny_acessivel_menu_horizontal --bind localhost 8008
 ```
 
 ## Publicar
 
-O `dist_shiny_acessivel_menu_horizontal/` gerado é copiado para a branch
-`gh-pages`, na pasta `shiny-acessivel-menu-horizontal/` (sem mexer no
-resto do site):
+O export é copiado para a **raiz** da branch `gh-pages` (preservando
+`.nojekyll` e a pasta `shiny-acessivel/`):
 
 ```sh
 poetry run shinylive export shiny_app_acessivel_menu_horizontal dist_shiny_acessivel_menu_horizontal
-# copiar o conteudo de dist_shiny_acessivel_menu_horizontal/ para gh-pages:/shiny-acessivel-menu-horizontal/, commitar, dar push
+# na gh-pages: apagar index.html, app.json, edit/, shinylive/, shinylive-sw.js;
+# copiar o conteudo de dist_shiny_acessivel_menu_horizontal/ para a raiz; commitar; dar push
 ```
 
-Publicado em:
-https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel-menu-horizontal/
+Publicado em: https://splor-mg.github.io/painel-ppag-loa-2027/
+(requer GitHub Pages ativado: Settings → Pages → branch `gh-pages`, pasta `/`).

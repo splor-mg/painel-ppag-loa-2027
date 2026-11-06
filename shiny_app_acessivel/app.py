@@ -91,7 +91,7 @@ app_ui = ui.page_bootstrap(
             "comparada com a ",
             ui.a(
                 "versão com menu horizontal",
-                href="https://vivigoncalvesportonascimento.github.io/painel-ppag-loa-2027/shiny-acessivel-menu-horizontal/",
+                href="https://splor-mg.github.io/painel-ppag-loa-2027/",
                 target="_blank",
                 rel="noopener noreferrer",
             ),
